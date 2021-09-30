@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -13,12 +14,9 @@ namespace VerticalSlice.Funcionalidades.Medicos.ObtemTodosMedicos
         public class ObtemTodosMedicosQueryHandler : IRequestHandler<ObtemTodosMedicosQuery, IEnumerable<ObtemTodosMedicosViewModel>>
         {
             private readonly VerticalSliceContext _context;
-            
-            private readonly IMediator _mediator;
 
-            public ObtemTodosMedicosQueryHandler(IMediator mediator, VerticalSliceContext context)
+            public ObtemTodosMedicosQueryHandler(VerticalSliceContext context)
             {
-                _mediator = mediator;
                 _context = context;
             }
 
@@ -26,9 +24,15 @@ namespace VerticalSlice.Funcionalidades.Medicos.ObtemTodosMedicos
                 CancellationToken cancellationToken)
             {
                 var medicos = await _context.Medicos.ToListAsync();
-                return medicos.Select(medico => new ObtemTodosMedicosViewModel { Id = medico.Id, Nome = medico.Nome, Email = medico.Email })
+                return medicos.Select(medico => new ObtemTodosMedicosViewModel(medico.Id,
+                                                                               medico.Nome,
+                                                                               medico.Email))
                     .ToList<ObtemTodosMedicosViewModel>();
             }
         }
     }
+
+    public record ObtemTodosMedicosViewModel(Guid Id,
+                                             string Nome,
+                                             string Email);
 }

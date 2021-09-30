@@ -1,4 +1,5 @@
 using System;
+using System.ComponentModel.DataAnnotations;
 using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
@@ -7,31 +8,52 @@ using VerticalSlice.Infraestrutura.Data;
 
 namespace VerticalSlice.Funcionalidades.Medicos.AdicionaMedico
 {
-    public class AdicionaMedicoCommand : IRequest<Guid>
+    public class AdicionaMedicoCommand : IRequest<AdicionaMedicoViewModel>
     {
-        public string Nome { get; set; }
-        public string Email { get; set; }
+        private readonly AdicionaMedicoInputModel _medico;
 
-        public class AdicionaMedicoCommandHandler : IRequestHandler<AdicionaMedicoCommand, Guid>
+        public AdicionaMedicoCommand(AdicionaMedicoInputModel medico)
+        {
+            _medico = medico;
+        }
+
+        public class AdicionaMedicoCommandHandler : IRequestHandler<AdicionaMedicoCommand, AdicionaMedicoViewModel>
         {
             private readonly VerticalSliceContext _context;
 
-            private readonly IMediator _mediator;
-
-            public AdicionaMedicoCommandHandler(IMediator mediator, VerticalSliceContext context)
+            public AdicionaMedicoCommandHandler(VerticalSliceContext context)
             {
-                _mediator = mediator;
                 _context = context;
             }
 
-            public async Task<Guid> Handle(AdicionaMedicoCommand command, CancellationToken cancellationToken)
+            public async Task<AdicionaMedicoViewModel> Handle(AdicionaMedicoCommand command,
+                CancellationToken cancellationToken)
             {
-                var medico = new Medico(command.Nome, command.Email);
-                await _context.AddAsync(medico);
+                var medico = new Medico(command._medico.Nome, command._medico.Email);
+                _context.Medicos.Add(medico);
                 await _context.SaveChangesAsync();
 
-                return medico.Id;
+                return new AdicionaMedicoViewModel(medico.Id,
+                                                   medico.Nome,
+                                                   medico.Email,
+                                                   medico.DataCriacao);
             }
         }
     }
+
+    public record AdicionaMedicoInputModel
+    {
+        [Required]
+        [MaxLength(50)]
+        public string Nome { get; set; }
+
+        [Required]
+        [MaxLength(100)]
+        public string Email { get; set; }
+    }
+
+    public record AdicionaMedicoViewModel(Guid Id,
+                                          string Nome,
+                                          string Email,
+                                          DateTime DataCriacao);
 }

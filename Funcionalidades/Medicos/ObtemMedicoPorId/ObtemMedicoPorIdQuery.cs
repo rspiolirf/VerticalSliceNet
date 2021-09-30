@@ -15,17 +15,13 @@ namespace VerticalSlice.Funcionalidades.Medicos.ObtemMedicoPorId
         public class ObtemMedicoPorIdQueryHandler : IRequestHandler<ObtemMedicoPorIdQuery, Medico>
         {
             private readonly VerticalSliceContext _context;
-            
-            private readonly IMediator _mediator;
 
-            public ObtemMedicoPorIdQueryHandler(IMediator mediator, VerticalSliceContext context)
+            public ObtemMedicoPorIdQueryHandler(VerticalSliceContext context)
             {
-                _mediator = mediator;
                 _context = context;
             }
 
-            public async Task<Medico> Handle(ObtemMedicoPorIdQuery query,
-                CancellationToken cancellationToken)
+            public async Task<Medico> Handle(ObtemMedicoPorIdQuery query, CancellationToken cancellationToken)
             {
                 return await _context.Medicos.FirstOrDefaultAsync(m => m.Id == query.Id);
             }

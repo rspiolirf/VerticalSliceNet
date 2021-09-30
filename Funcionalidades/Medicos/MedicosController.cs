@@ -32,11 +32,11 @@ namespace VerticalSlice.Funcionalidades.Medicos.ExcluiMedico
         [Route("api/medicos")]
         public async Task<IActionResult> InsereMedico(AdicionaMedicoInputModel medico)
         {
-            if (!ModelState.IsValid) return BadRequest();
+            if (!ModelState.IsValid)
+                return BadRequest();
 
-            var id = await _mediator.Send(new AdicionaMedicoCommand { Nome = medico.Nome, Email = medico.Email });
-            var result = await _mediator.Send(new ObtemMedicoPorIdQuery { Id = id });
-            return Created($"api/medicos/{id}", result);
+            var result = await _mediator.Send(new AdicionaMedicoCommand(medico));
+            return Created($"api/medicos/{result.Id}", result);
         }
 
         [HttpDelete]

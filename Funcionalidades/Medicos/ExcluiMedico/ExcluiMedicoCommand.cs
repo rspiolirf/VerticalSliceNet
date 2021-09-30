@@ -14,19 +14,19 @@ namespace VerticalSlice.Funcionalidades.Medicos.ExcluiMedico
         {
             private readonly VerticalSliceContext _context;
 
-            private readonly IMediator _mediator;
-
-            public ExcluiMedicoCommandHandler(IMediator mediator, VerticalSliceContext context)
+            public ExcluiMedicoCommandHandler(VerticalSliceContext context)
             {
-                _mediator = mediator;
                 _context = context;
             }
 
             public async Task<Guid> Handle(ExcluiMedicoCommand command, CancellationToken cancellationToken)
             {
                 var medico = await _context.Medicos.FindAsync(command.Id);
-                _context.Remove(medico);
-                await _context.SaveChangesAsync();
+                if (medico is not null)
+                {
+                    _context.Remove(medico);
+                    await _context.SaveChangesAsync();
+                }
 
                 return command.Id;
             }
