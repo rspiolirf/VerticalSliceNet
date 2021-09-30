@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using VerticalSlice.Filtros;
 using VerticalSlice.Funcionalidades.Medicos.AdicionaMedico;
 using VerticalSlice.Funcionalidades.Medicos.ObtemMedicoPorId;
 using VerticalSlice.Funcionalidades.Medicos.ObtemTodosMedicos;
@@ -30,11 +31,9 @@ namespace VerticalSlice.Funcionalidades.Medicos.ExcluiMedico
 
         [HttpPost]
         [Route("api/medicos")]
+        [ModelValidationAttribute]
         public async Task<IActionResult> InsereMedico(AdicionaMedicoInputModel medico)
         {
-            if (!ModelState.IsValid)
-                return BadRequest();
-
             var result = await _mediator.Send(new AdicionaMedicoCommand(medico));
             return Created($"api/medicos/{result.Id}", result);
         }
