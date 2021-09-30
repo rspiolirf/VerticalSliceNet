@@ -1,8 +1,0 @@
-{
-  "runtimeOptions": {
-    "additionalProbingPaths": [
-      "/home/rspiolirf/.dotnet/store/|arch|/|tfm|",
-      "/home/rspiolirf/.nuget/packages"
-    ]
-  }
-}
