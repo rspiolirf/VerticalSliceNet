@@ -9,6 +9,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using VerticalSlice.Filtros;
 using VerticalSlice.Infraestrutura.Data;
+using VerticalSlice.Middleware;
 
 namespace VerticalSlice
 {
@@ -48,6 +49,8 @@ namespace VerticalSlice
             app.UseRouting();
 
             app.UseAuthorization();
+
+            app.UseMiddleware<ErrorHandlerMiddleware>();
 
             app.UseEndpoints(endpoints =>
             {
