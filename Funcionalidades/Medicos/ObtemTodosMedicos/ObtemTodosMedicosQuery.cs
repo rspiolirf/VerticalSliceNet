@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using AutoMapper;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using VerticalSlice.Infraestrutura.Data;
@@ -34,5 +35,11 @@ namespace VerticalSlice.Funcionalidades.Medicos.ObtemTodosMedicos
 
     public record ObtemTodosMedicosViewModel(Guid Id,
                                              string Nome,
-                                             string Email);
+                                             string Email)
+    {
+        public class ObtemTodosMedicosViewModelProfile : Profile
+        {
+            
+        }
+    }
 }

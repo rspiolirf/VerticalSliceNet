@@ -32,9 +32,9 @@ namespace VerticalSlice.Funcionalidades.Medicos.ExcluiMedico
         [HttpPost]
         [Route("api/medicos")]
         [ModelValidationAttribute]
-        public async Task<IActionResult> InsereMedico(AdicionaMedicoInputModel medico)
+        public async Task<IActionResult> InsereMedico(AdicionaMedicoInputModel medicoInputModel)
         {
-            var result = await _mediator.Send(new AdicionaMedicoCommand(medico));
+            var result = await _mediator.Send(new AdicionaMedicoCommand { Medico = medicoInputModel } );
             return Created($"api/medicos/{result.Id}", result);
         }
 

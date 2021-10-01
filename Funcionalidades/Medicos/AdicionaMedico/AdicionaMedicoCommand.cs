@@ -2,6 +2,7 @@ using System;
 using System.ComponentModel.DataAnnotations;
 using System.Threading;
 using System.Threading.Tasks;
+using AutoMapper;
 using MediatR;
 using VerticalSlice.Dominio.Entidades;
 using VerticalSlice.Infraestrutura.Data;
@@ -10,33 +11,27 @@ namespace VerticalSlice.Funcionalidades.Medicos.AdicionaMedico
 {
     public class AdicionaMedicoCommand : IRequest<AdicionaMedicoViewModel>
     {
-        private readonly AdicionaMedicoInputModel _medico;
-
-        public AdicionaMedicoCommand(AdicionaMedicoInputModel medico)
-        {
-            _medico = medico;
-        }
+        public AdicionaMedicoInputModel Medico { get; set; }
 
         public class AdicionaMedicoCommandHandler : IRequestHandler<AdicionaMedicoCommand, AdicionaMedicoViewModel>
         {
             private readonly VerticalSliceContext _context;
+            private readonly IMapper _mapper;
 
-            public AdicionaMedicoCommandHandler(VerticalSliceContext context)
+            public AdicionaMedicoCommandHandler(VerticalSliceContext context, IMapper mapper)
             {
                 _context = context;
+                _mapper = mapper;
             }
 
             public async Task<AdicionaMedicoViewModel> Handle(AdicionaMedicoCommand command,
                 CancellationToken cancellationToken)
             {
-                var medico = new Medico(command._medico.Nome, command._medico.Email);
+                var medico = _mapper.Map<Medico>(command.Medico);
                 _context.Medicos.Add(medico);
                 await _context.SaveChangesAsync();
 
-                return new AdicionaMedicoViewModel(medico.Id,
-                                                   medico.Nome,
-                                                   medico.Email,
-                                                   medico.DataCriacao);
+                return _mapper.Map<AdicionaMedicoViewModel>(medico);
             }
         }
     }
@@ -50,10 +45,27 @@ namespace VerticalSlice.Funcionalidades.Medicos.AdicionaMedico
         [Required]
         [MaxLength(100)]
         public string Email { get; set; }
+
+        public class AdicionaMedicoInputModelProfile : Profile
+        {
+            public AdicionaMedicoInputModelProfile()
+            {
+                CreateMap<AdicionaMedicoInputModel, Medico>();
+            }
+        }
     }
 
     public record AdicionaMedicoViewModel(Guid Id,
                                           string Nome,
                                           string Email,
-                                          DateTime DataCriacao);
+                                          DateTime DataCriacao)
+    {
+        public class AdicionaMedicoViewModelProfile : Profile
+        {
+            public AdicionaMedicoViewModelProfile()
+            {
+                CreateMap<Medico, AdicionaMedicoViewModel>();
+            }
+        }
+    }
 }
