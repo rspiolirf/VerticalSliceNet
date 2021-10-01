@@ -21,7 +21,7 @@ namespace VerticalSlice.Funcionalidades.Medicos.ExcluiMedico
 
         [HttpGet]
         [Route("api/medicos")]
-        public async Task<IActionResult> ObtemTodosMedicos() => 
+        public async Task<IActionResult> ObtemTodosMedicos() =>
             Ok(await _mediator.Send(new ObtemTodosMedicosQuery()));
 
         [HttpGet]
