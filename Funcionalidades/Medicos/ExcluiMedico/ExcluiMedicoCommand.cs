@@ -23,7 +23,8 @@ namespace VerticalSlice.Funcionalidades.Medicos.ExcluiMedico
             public async Task<Guid> Handle(ExcluiMedicoCommand command, CancellationToken cancellationToken)
             {
                 var medico = await _context.Medicos.FindAsync(command.Id);
-                if (medico is null) throw new MedicoInexistenteException($"Não existe o médico com o código {command.Id}.");
+                if (medico is null)
+                    throw new MedicoInexistenteException($"Não existe o médico com o código {command.Id}.");
                 
                 _context.Remove(medico);
                 await _context.SaveChangesAsync();

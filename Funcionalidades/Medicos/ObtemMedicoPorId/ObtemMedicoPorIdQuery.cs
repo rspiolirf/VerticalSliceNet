@@ -5,6 +5,7 @@ using AutoMapper;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using VerticalSlice.Dominio.Entidades;
+using VerticalSlice.Dominio.Excecoes;
 using VerticalSlice.Infraestrutura.Data;
 
 namespace VerticalSlice.Funcionalidades.Medicos.ObtemMedicoPorId
@@ -26,7 +27,10 @@ namespace VerticalSlice.Funcionalidades.Medicos.ObtemMedicoPorId
 
             public async Task<ObtemMedicoPorIdViewModel> Handle(ObtemMedicoPorIdQuery query, CancellationToken cancellationToken)
             {
-                var medico = await _context.Medicos.FirstOrDefaultAsync(m => m.Id == query.Id);
+                var medico = await _context.Medicos.FindAsync(query.Id);
+                if (medico is null)
+                    throw new MedicoInexistenteException($"Não existe o médico com o código {query.Id}.");
+                    
                 return _mapper.Map<ObtemMedicoPorIdViewModel>(medico);
             }
         }
