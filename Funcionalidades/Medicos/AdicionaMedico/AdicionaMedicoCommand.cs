@@ -9,11 +9,17 @@ using VerticalSlice.Infraestrutura.Data;
 
 namespace VerticalSlice.Funcionalidades.Medicos.AdicionaMedico
 {
-    public class AdicionaMedicoCommand : IRequest<AdicionaMedicoViewModel>
+    public class AdicionaMedicoCommand : IRequest<AdicionaMedicoResponse>
     {
-        public AdicionaMedicoInputModel Medico { get; set; }
+        [Required]
+        [MaxLength(50)]
+        public string Nome { get; set; }
 
-        public class AdicionaMedicoCommandHandler : IRequestHandler<AdicionaMedicoCommand, AdicionaMedicoViewModel>
+        [Required]
+        [MaxLength(100)]
+        public string Email { get; set; }
+
+        public class AdicionaMedicoCommandHandler : IRequestHandler<AdicionaMedicoCommand, AdicionaMedicoResponse>
         {
             private readonly VerticalSliceContext _context;
             private readonly IMapper _mapper;
@@ -24,38 +30,27 @@ namespace VerticalSlice.Funcionalidades.Medicos.AdicionaMedico
                 _mapper = mapper;
             }
 
-            public async Task<AdicionaMedicoViewModel> Handle(AdicionaMedicoCommand command,
+            public async Task<AdicionaMedicoResponse> Handle(AdicionaMedicoCommand command,
                 CancellationToken cancellationToken)
             {
-                var medico = _mapper.Map<Medico>(command.Medico);
+                var medico = _mapper.Map<Medico>(command);
                 _context.Medicos.Add(medico);
                 await _context.SaveChangesAsync();
 
-                return _mapper.Map<AdicionaMedicoViewModel>(medico);
+                return _mapper.Map<AdicionaMedicoResponse>(medico);
             }
         }
     }
 
-    public record AdicionaMedicoInputModel
+    public class AdicionaMedicoCommandProfile : Profile
     {
-        [Required]
-        [MaxLength(50)]
-        public string Nome { get; set; }
-
-        [Required]
-        [MaxLength(100)]
-        public string Email { get; set; }
-
-        public class AdicionaMedicoInputModelProfile : Profile
+        public AdicionaMedicoCommandProfile()
         {
-            public AdicionaMedicoInputModelProfile()
-            {
-                CreateMap<AdicionaMedicoInputModel, Medico>();
-            }
+            CreateMap<AdicionaMedicoCommand, Medico>();
         }
     }
 
-    public record AdicionaMedicoViewModel(Guid Id,
+    public record AdicionaMedicoResponse(Guid Id,
                                           string Nome,
                                           string Email,
                                           DateTime DataCriacao)
@@ -64,7 +59,7 @@ namespace VerticalSlice.Funcionalidades.Medicos.AdicionaMedico
         {
             public AdicionaMedicoViewModelProfile()
             {
-                CreateMap<Medico, AdicionaMedicoViewModel>();
+                CreateMap<Medico, AdicionaMedicoResponse>();
             }
         }
     }

@@ -3,18 +3,17 @@ using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
 using VerticalSlice.Dominio.Entidades;
 using VerticalSlice.Dominio.Excecoes;
 using VerticalSlice.Infraestrutura.Data;
 
 namespace VerticalSlice.Funcionalidades.Medicos.ObtemMedicoPorId
 {
-    public class ObtemMedicoPorIdQuery : IRequest<ObtemMedicoPorIdViewModel>
+    public class ObtemMedicoPorIdQuery : IRequest<ObtemMedicoPorIdResponse>
     {
         public Guid Id { get; set; }
-        
-        public class ObtemMedicoPorIdQueryHandler : IRequestHandler<ObtemMedicoPorIdQuery, ObtemMedicoPorIdViewModel>
+            
+        public class ObtemMedicoPorIdQueryHandler : IRequestHandler<ObtemMedicoPorIdQuery, ObtemMedicoPorIdResponse>
         {
             private readonly VerticalSliceContext _context;
             private readonly IMapper _mapper;
@@ -25,24 +24,25 @@ namespace VerticalSlice.Funcionalidades.Medicos.ObtemMedicoPorId
                 _mapper = mapper;
             }
 
-            public async Task<ObtemMedicoPorIdViewModel> Handle(ObtemMedicoPorIdQuery query, CancellationToken cancellationToken)
+            public async Task<ObtemMedicoPorIdResponse> Handle(ObtemMedicoPorIdQuery query,
+                CancellationToken cancellationToken)
             {
                 var medico = await _context.Medicos.FindAsync(query.Id);
                 if (medico is null)
                     throw new MedicoInexistenteException($"Não existe o médico com o código {query.Id}.");
                     
-                return _mapper.Map<ObtemMedicoPorIdViewModel>(medico);
+                return _mapper.Map<ObtemMedicoPorIdResponse>(medico);
             }
         }
     }
 
-    public record ObtemMedicoPorIdViewModel(Guid Id, string Nome)
+    public record ObtemMedicoPorIdResponse(Guid Id, string Nome)
     {
         public class ObtemMedicoPorIdViewModelProfile : Profile
         {
             public ObtemMedicoPorIdViewModelProfile()
             {
-                CreateMap<Medico, ObtemMedicoPorIdViewModel>();
+                CreateMap<Medico, ObtemMedicoPorIdResponse>();
             }
         }
     }

@@ -2,7 +2,6 @@ using System.Reflection;
 using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -26,10 +25,10 @@ namespace VerticalSlice
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddAutoMapper(typeof(Startup));
+            services.AddMediatR(Assembly.GetExecutingAssembly());
             services.AddScoped<ModelValidationAttribute>();
             services.AddDbContext<VerticalSliceContext>();
             services.AddControllers();
-            services.AddMediatR(Assembly.GetExecutingAssembly());
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "VerticalSlice", Version = "v1" });
