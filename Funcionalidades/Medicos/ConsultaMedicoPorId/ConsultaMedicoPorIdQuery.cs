@@ -3,6 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 using VerticalSlice.Dominio.Entidades;
 using VerticalSlice.Dominio.Excecoes;
 using VerticalSlice.Infraestrutura.Data;
@@ -27,7 +28,9 @@ namespace VerticalSlice.Funcionalidades.Medicos.ConsultaMedicoPorId
             public async Task<ConsultaMedicoPorIdResponse> Handle(ConsultaMedicoPorIdQuery query,
                 CancellationToken cancellationToken)
             {
-                var medico = await _context.Medicos.FindAsync(query.Id);
+                var medico = await _context.Medicos
+                    .FindAsync(query.Id);
+                    
                 if (medico is null)
                     throw new MedicoInexistenteException($"Não existe o médico com o código {query.Id}.");
                     

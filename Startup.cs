@@ -28,7 +28,8 @@ namespace VerticalSlice
             services.AddMediatR(Assembly.GetExecutingAssembly());
             services.AddScoped<ModelValidationAttribute>();
             services.AddDbContext<VerticalSliceContext>();
-            services.AddControllers();
+            //services.AddControllers();
+            services.AddControllersWithViews();
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "VerticalSlice", Version = "v1" });

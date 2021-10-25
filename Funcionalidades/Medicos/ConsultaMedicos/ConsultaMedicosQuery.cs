@@ -26,7 +26,10 @@ namespace VerticalSlice.Funcionalidades.Medicos.ConsultaMedicos
             public async Task<IEnumerable<ConsultaMedicosResponse>> Handle(ConsultaMedicosQuery query,
                 CancellationToken cancellationToken)
             {
-                var medicos = await _context.Medicos.ToListAsync();
+                var medicos = await _context.Medicos
+                    .AsNoTracking()
+                    .ToListAsync();
+                
                 return _mapper.Map<List<Medico>, List<ConsultaMedicosResponse>>(medicos);
             }
         }
